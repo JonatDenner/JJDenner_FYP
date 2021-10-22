@@ -7,17 +7,18 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 
-for filename in os.listdir(sys.path[0]+"/media"):
+for filename in os.listdir(sys.path[0] + "/media"):
     if filename.endswith(".mp4"):
         print(filename)
-        cap = cv2.VideoCapture("media/"+filename)
+        cap = cv2.VideoCapture("media/" + filename)
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        out = cv2.VideoWriter('media/out/output.avi',fourcc, 5, (1600,1280))
+        out = cv2.VideoWriter('media/out/output.avi', fourcc, 5, (1600, 1280))
 
         while True:
             ret, frame = cap.read()
             if ret == True:
-                b = cv2.resize(frame,(1600,1280),fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
+                b = cv2.resize(frame, (1600, 1280), fx=0, fy=0,
+                               interpolation=cv2.INTER_CUBIC)
                 out.write(b)
             else:
                 break
