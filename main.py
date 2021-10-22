@@ -6,7 +6,23 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 
 # For webcam input:
-cap = cv2.video("media/America.mp4")
+cap = cv2.VideoCapture("media/America.mp4")
+fourcc = cv2.VideoWriter_fourcc(*'XVID')
+out = cv2.VideoWriter('media/out/output.avi',fourcc, 5, (1600,1280))
+
+while True:
+    ret, frame = cap.read()
+    if ret == True:
+        b = cv2.resize(frame,(1600,1280),fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
+        out.write(b)
+    else:
+        break
+
+cap.release()
+out.release()
+
+cap = cv2.VideoCapture("media/out/output.avi")
+
 with mp_hands.Hands(
         model_complexity=0,
         min_detection_confidence=0.5,
@@ -37,6 +53,6 @@ with mp_hands.Hands(
                     mp_drawing_styles.get_default_hand_connections_style())
         # Flip the image horizontally for a selfie-view display.
         cv2.imshow('MediaPipe Hands', cv2.flip(image, 1))
-        if cv2.waitKey(5) & 0xFF == 27:
+        if cv2.waitKey(50) & 0xFF == 27:
             break
 cap.release()
