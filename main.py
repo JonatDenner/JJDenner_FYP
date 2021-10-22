@@ -1,58 +1,64 @@
 import mediapipe as mp
 import cv2
+import os
+import sys
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 
-# For webcam input:
-cap = cv2.VideoCapture("media/America.mp4")
-fourcc = cv2.VideoWriter_fourcc(*'XVID')
-out = cv2.VideoWriter('media/out/output.avi',fourcc, 5, (1600,1280))
+for filename in os.listdir(sys.path[0]+"/media"):
+    if filename.endswith(".mp4"):
+        print(filename)
+        cap = cv2.VideoCapture("media/"+filename)
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        out = cv2.VideoWriter('media/out/output.avi',fourcc, 5, (1600,1280))
 
-while True:
-    ret, frame = cap.read()
-    if ret == True:
-        b = cv2.resize(frame,(1600,1280),fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
-        out.write(b)
+        while True:
+            ret, frame = cap.read()
+            if ret == True:
+                b = cv2.resize(frame,(1600,1280),fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
+                out.write(b)
+            else:
+                break
+
+        cap.release()
+        out.release()
+
+        cap = cv2.VideoCapture("media/out/output.avi")
+
+        with mp_hands.Hands(
+                model_complexity=0,
+                min_detection_confidence=0.5,
+                min_tracking_confidence=0.5) as hands:
+            while cap.isOpened():
+                success, image = cap.read()
+                if not success:
+                    print("Ignoring empty camera frame.")
+                    # If loading a video, use 'break' instead of 'continue'.
+                    break
+
+                # To improve performance, optionally mark the image as not writeable to
+                # pass by reference.
+                image.flags.writeable = False
+                image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+                results = hands.process(image)
+
+                # Draw the hand annotations on the image.
+                image.flags.writeable = True
+                image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+                if results.multi_hand_landmarks:
+                    for hand_landmarks in results.multi_hand_landmarks:
+                        mp_drawing.draw_landmarks(
+                            image,
+                            hand_landmarks,
+                            mp_hands.HAND_CONNECTIONS,
+                            mp_drawing_styles.get_default_hand_landmarks_style(),
+                            mp_drawing_styles.get_default_hand_connections_style())
+                # Flip the image horizontally for a selfie-view display.
+                cv2.imshow('MediaPipe Hands', cv2.flip(image, 1))
+                if cv2.waitKey(50) & 0xFF == 27:
+                    break
+        cap.release()
     else:
-        break
-
-cap.release()
-out.release()
-
-cap = cv2.VideoCapture("media/out/output.avi")
-
-with mp_hands.Hands(
-        model_complexity=0,
-        min_detection_confidence=0.5,
-        min_tracking_confidence=0.5) as hands:
-    while cap.isOpened():
-        success, image = cap.read()
-        if not success:
-            print("Ignoring empty camera frame.")
-            # If loading a video, use 'break' instead of 'continue'.
-            break
-
-        # To improve performance, optionally mark the image as not writeable to
-        # pass by reference.
-        image.flags.writeable = False
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        results = hands.process(image)
-
-        # Draw the hand annotations on the image.
-        image.flags.writeable = True
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        if results.multi_hand_landmarks:
-            for hand_landmarks in results.multi_hand_landmarks:
-                mp_drawing.draw_landmarks(
-                    image,
-                    hand_landmarks,
-                    mp_hands.HAND_CONNECTIONS,
-                    mp_drawing_styles.get_default_hand_landmarks_style(),
-                    mp_drawing_styles.get_default_hand_connections_style())
-        # Flip the image horizontally for a selfie-view display.
-        cv2.imshow('MediaPipe Hands', cv2.flip(image, 1))
-        if cv2.waitKey(50) & 0xFF == 27:
-            break
-cap.release()
+        continue
