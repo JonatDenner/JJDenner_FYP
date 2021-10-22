@@ -61,5 +61,6 @@ for filename in os.listdir(sys.path[0] + "/media"):
                 if cv2.waitKey(50) & 0xFF == 27:
                     break
         cap.release()
+
     else:
         continue
