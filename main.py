@@ -73,7 +73,7 @@ def main_process(filename):
 
 if __name__ == "__main__":
     total_files = os.listdir(sys.path[0] + "/media/out")
-    thread_count = 2
+    thread_count = 5
     iterations = len(total_files)//thread_count
     pool = multi.Pool(multi.cpu_count())
     # example
