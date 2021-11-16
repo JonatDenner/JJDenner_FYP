@@ -1,7 +1,7 @@
 # JJDenner_FYP
 Sign language recognition with raspi
 
-## Requirements
+# Requirements
 #### [Google Mediapipe](https://google.github.io/mediapipe/getting_started/install.html)
 #### OpenCV
 ```bash
