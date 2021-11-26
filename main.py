@@ -50,6 +50,9 @@ def main_process(filename):
                 image.flags.writeable = False
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                 results = hands.process(image)
+                if results.hand_rects:
+                    for rect in results.hand_rects:
+                        print(rect)
                 image_height, image_width, _ = image.shape
                 # Draw the hand annotations on the image.
                 image.flags.writeable = True
