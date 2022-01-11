@@ -76,7 +76,7 @@ model.add(Dense(256, activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(128, activation='relu'))
 model.add(Dropout(0.5))
-model.add(Dense(101, activation='softmax'))
+model.add(Dense(5, activation='softmax')) #set total number of classes as number (can use number of videos in /media/base)
 
 # defining a function to save the weights of best model
 mcp_save = ModelCheckpoint(
@@ -87,5 +87,4 @@ model.compile(loss='categorical_crossentropy',
               optimizer='Adam', metrics=['accuracy'])
 
 # training the model
-model.fit(X_train, y_train, epochs=200, validation_data=(
-    X_test, y_test), callbacks=[mcp_save], batch_size=128)
+model.fit(X_train, y_train, epochs=200, validation_data=(X_test, y_test), callbacks=[mcp_save], batch_size=128)
