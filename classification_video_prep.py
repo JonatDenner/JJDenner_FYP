@@ -15,14 +15,12 @@ import os
 import sys
 
 train_files = os.listdir(sys.path[0] + "/media/out/train")
-test_files = os.listdir(sys.path[0] + "/media/out/test")
 
 # set up train dataframe
 train = pd.DataFrame()
 train['video_name'] = train_files
-# set up test dataframe
-test = pd.DataFrame()
-test['video_name'] = test_files
+train = train[1:] # removes .gitignore
+
 
 # tag creation for training videos
 train_video_tag = []
@@ -30,13 +28,6 @@ for i in range(train.shape[0]):
     train_video_tag.append(train['video_name'][i].split('_')[0])
 
 train['tag'] = train_video_tag
-
-# tag creation for testing videos
-test_video_tag = []
-for i in range(test.shape[0]):
-    test_video_tag.append(test['video_name'][i].split('_')[0])
-
-test['tag'] = test_video_tag
 
 # storing the frames from training videos
 # for i in tqdm(range(train.shape[0])):
