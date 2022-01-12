@@ -30,6 +30,7 @@ for i in range(train.shape[0]):
 train['tag'] = train_video_tag
 
 # storing the frames from training videos
+
 # for i in tqdm(range(train.shape[0])):
 #     count = 0
 #     videoFile = train['video_name'][i]
