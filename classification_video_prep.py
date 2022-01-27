@@ -19,30 +19,36 @@ train_files = os.listdir(sys.path[0] + "/media/out/train")
 # set up train dataframe
 train = pd.DataFrame()
 train['video_name'] = train_files
-train = train[1:] # removes .gitignore
-
+train = train[1:] # removes .gitkeep
+#print(train.head())
 
 # tag creation for training videos
 train_video_tag = []
 for i in range(train.shape[0]):
-    train_video_tag.append(train['video_name'][i].split('_')[0])
+    #print(train['video_name'][i+1])
+    train_video_tag.append(train['video_name'][i+1].split('_')[0])
 
 train['tag'] = train_video_tag
 
-# storing the frames from training videos
+#storing the frames from training videos
 
-# for i in tqdm(range(train.shape[0])):
+# for i in range(train.shape[0]):
 #     count = 0
-#     videoFile = train['video_name'][i]
+#     videoFile = train['video_name'][i+1]
 #     cap = cv2.VideoCapture(sys.path[0] + "/media/out/train/" + videoFile)
 #     success,image = cap.read()
 #     while success:
-#         cv2.imwrite(sys.path[0] + "/outputs/train_1/" + videoFile[:-4] +"_frame%d.jpg" % count, image)
+#         if count < 10:
+#             cv2.imwrite(sys.path[0] + "/outputs/train_1/" + videoFile[:-4] +"_frame0%d.jpg" % count, image)
+#         else:
+#             cv2.imwrite(sys.path[0] + "/outputs/train_1/" + videoFile[:-4] +"_frame%d.jpg" % count, image)
 #         success,image = cap.read()
 #         count += 1
+#     print("Completed " + videoFile)
 #     cap.release()
 
 images = glob(sys.path[0] + "/outputs/train_1/*.jpg")
+images = sorted(images)
 train_image = []
 train_class = []
 

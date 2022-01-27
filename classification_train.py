@@ -33,7 +33,9 @@ for i in tqdm(range(train.shape[0])):
     img = img / 255
     # appending the image to the train_image list
     train_image.append(img)
+    print("\033[1;30m" + str(i) + ": Adding " + train['image'][i])
 
+print("---------------------------------------\033[1;37m")
 # converting the list to numpy array
 X = np.array(train_image)
 
@@ -55,16 +57,18 @@ y_test = pd.get_dummies(y_test)
 base_model = VGG16(weights='imagenet', include_top=False)
 
 # extracting features for training frames
+print("\033[1;32mExtracting training frame features...")
 X_train = base_model.predict(X_train)
-# print(X_train.shape) # (5296, 7, 7, 512)
+#print(X_train.shape) # (5932, 7, 7, 512)
 
 # extracting features for validation frames
+print("\033[1;32mExtracting validation frame features...")
 X_test = base_model.predict(X_test)
-# print(X_test.shape) # (1324, 7, 7, 512)
+#print(X_test.shape) # (1483, 7, 7, 512)
 
 # reshaping the training as well as validation frames in single dimension
-X_train = X_train.reshape(5296, 7 * 7 * 512)
-X_test = X_test.reshape(1324, 7 * 7 * 512)
+X_train = X_train.reshape(5932, 7 * 7 * 512)
+X_test = X_test.reshape(1483, 7 * 7 * 512)
 
 # defining the model architecture
 model = Sequential()
@@ -79,12 +83,15 @@ model.add(Dropout(0.5))
 model.add(Dense(5, activation='softmax')) #set total number of classes as number (can use number of videos in /media/base)
 
 # defining a function to save the weights of best model
+print("\033[1;32mSetting model save file...")
 mcp_save = ModelCheckpoint(
     'weight.hdf5', save_best_only=True, monitor='val_loss', mode='min')
 
 # compiling the model
+print("\033[1;32mCompiling model...")
 model.compile(loss='categorical_crossentropy',
               optimizer='Adam', metrics=['accuracy'])
 
 # training the model
+print("\033[1;31mFitting model. This may take some time...")
 model.fit(X_train, y_train, epochs=200, validation_data=(X_test, y_test), callbacks=[mcp_save], batch_size=128)

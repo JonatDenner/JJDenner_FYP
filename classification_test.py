@@ -14,6 +14,7 @@ from glob import glob
 from scipy import stats as s
 import os
 import sys
+import re
 
 base_model = VGG16(weights='imagenet', include_top=False)
 
@@ -38,7 +39,7 @@ test_files = os.listdir(sys.path[0] + "/media/out/test")
 
 test = pd.DataFrame()
 test['video_name'] = test_files
-test = test[1:] # removes .gitignore
+test = test[1:] # removes .gitkeep
 
 test_videos = test['video_name']
 #print(test_videos)
@@ -54,6 +55,7 @@ actual = []
 
 # for loop to extract frames from each test video
 for i in tqdm(range(test_videos.shape[0])):
+    print("\033[1;32mExtracting test video frames...")
     count = 0
     videoFile = test_videos[i+1]
     cap = cv2.VideoCapture(sys.path[0] + "/media/out/test/" + videoFile)
@@ -63,13 +65,17 @@ for i in tqdm(range(test_videos.shape[0])):
         os.remove(f)
 
     while success:
-        cv2.imwrite(sys.path[0] + "/temp/" + "frame%d.jpg" % count, im)
+        if count < 10:
+            cv2.imwrite(sys.path[0] + "/temp/" + "frame%d.jpg" % count, im)
+        else:
+            cv2.imwrite(sys.path[0] + "/temp/" + "frame%d.jpg" % count, im)
         success,im = cap.read()
         count += 1
     cap.release()
 
     # reading all the frames from temp folder
     images = glob("temp/*.jpg")
+    images = sorted(images)
     #print(images)
 
     prediction_images = []
@@ -79,6 +85,7 @@ for i in tqdm(range(test_videos.shape[0])):
         img = img/255
         prediction_images.append(img)
 
+    print("\033[1;32mPredicting...")
     # converting all the frames for a test video into numpy array
     prediction_images = np.array(prediction_images)
     # extracting features using pre-trained model
@@ -95,7 +102,19 @@ for i in tqdm(range(test_videos.shape[0])):
 
 # checking the accuracy of the predicted tags
 from sklearn.metrics import accuracy_score
-print(predict)
-print(actual)
+predictions = list(zip(predict, actual))
+print("\033[1;36m----------------------------------")
+for x in predictions:
+    p = x[0]
+    a = x[1]
+    p = re.sub(r"(\w)([A-Z])", r"\1 \2", p)
+    a = re.sub(r"(\w)([A-Z])", r"\1 \2", a)
+
+    if p == a:
+        print("\033[1;32mPrediction matched result: " + p)
+    else:
+        print("\033[1;31mPrediction: " + p + "\tActual: " + a)
+
 score = accuracy_score(predict, actual)*100
+print("\033[1;36m----------------------------------\nAccuracy:")
 print(score)
