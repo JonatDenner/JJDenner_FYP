@@ -57,12 +57,12 @@ y_test = pd.get_dummies(y_test)
 base_model = VGG16(weights='imagenet', include_top=False)
 
 # extracting features for training frames
-print("\033[1;32mExtracting training frame features...")
+print("\033[1;32mExtracting training frame features. This may take some time...")
 X_train = base_model.predict(X_train)
 #print(X_train.shape) # (5932, 7, 7, 512)
 
 # extracting features for validation frames
-print("\033[1;32mExtracting validation frame features...")
+print("\033[1;32mExtracting validation frame features. This may take some time...")
 X_test = base_model.predict(X_test)
 #print(X_test.shape) # (1483, 7, 7, 512)
 
@@ -93,5 +93,5 @@ model.compile(loss='categorical_crossentropy',
               optimizer='Adam', metrics=['accuracy'])
 
 # training the model
-print("\033[1;31mFitting model. This may take some time...")
-model.fit(X_train, y_train, epochs=200, validation_data=(X_test, y_test), callbacks=[mcp_save], batch_size=128)
+print("\033[1;31mFinding best epoch. This may take some time...")
+model.fit(X_train, y_train, epochs=100, validation_data=(X_test, y_test), callbacks=[mcp_save], batch_size=128)

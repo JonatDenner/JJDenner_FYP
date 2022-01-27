@@ -55,7 +55,7 @@ actual = []
 
 # for loop to extract frames from each test video
 for i in tqdm(range(test_videos.shape[0])):
-    print("\033[1;32mExtracting test video frames...")
+    print("\033[1;36mExtracting test video frames...")
     count = 0
     videoFile = test_videos[i+1]
     cap = cv2.VideoCapture(sys.path[0] + "/media/out/test/" + videoFile)
@@ -85,7 +85,7 @@ for i in tqdm(range(test_videos.shape[0])):
         img = img/255
         prediction_images.append(img)
 
-    print("\033[1;32mPredicting...")
+    print("\033[1;36mPredicting...")
     # converting all the frames for a test video into numpy array
     prediction_images = np.array(prediction_images)
     # extracting features using pre-trained model
