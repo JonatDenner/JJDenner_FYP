@@ -1,5 +1,11 @@
+#bulky files
 *.mp4
 *.avi
 *.csv
 *.jpg
+
+#trained model - big file
 *.hdf5
+
+#temp hidden files made by ffmpeg
+.fuse*
