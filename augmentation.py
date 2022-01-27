@@ -15,8 +15,8 @@ import concurrent.futures
 
 
 main_folder_path = "media/base"
-output_folder_path = "media/out"
-no_of_clips_to_augment_per_frame = 25
+output_folder_path = "media/out/aug"
+no_of_clips_to_augment_per_frame = 5
 video_clip_names = ['']
 
 
@@ -34,9 +34,8 @@ def augment_and_save_frames(video_reader, output_folder_path, video_clip_name, i
     """
 
     # These 4 lines take care of abnormal file names
-    temp = video_clip_name.replace(" ", "")
-    temp = temp.split(".")
-    editted_name = temp[0] + "_" + str(i) + "." + temp[1]
+    temp = video_clip_name.split(".")
+    editted_name = temp[0].title().replace(" ", "") + "_" + str(i) + "." + temp[1]
     path_of_video_to_save = output_folder_path + "//" + editted_name
     # Noise value to add to videos for augmentation
     noise_value = random.randint(0, 60)
