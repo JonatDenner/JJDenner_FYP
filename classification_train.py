@@ -94,4 +94,4 @@ model.compile(loss='categorical_crossentropy',
 
 # training the model
 print("\033[1;31mFinding best epoch. This may take some time...")
-model.fit(X_train, y_train, epochs=100, validation_data=(X_test, y_test), callbacks=[mcp_save], batch_size=128)
+model.fit(X_train, y_train, epochs=75, validation_data=(X_test, y_test), callbacks=[mcp_save], batch_size=128)
