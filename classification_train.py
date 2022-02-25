@@ -54,7 +54,7 @@ y_train = pd.get_dummies(y_train)
 y_test = pd.get_dummies(y_test)
 
 # creating the base model of pre-trained VGG16 model
-base_model = VGG16(weights='imagenet', include_top=False)
+base_model = VGG16(weights='imagenet', include_top=True)
 
 # extracting features for training frames
 print("\033[1;32mExtracting training frame features. This may take some time...")
@@ -67,12 +67,12 @@ X_test = base_model.predict(X_test)
 #print(X_test.shape) # (1483, 7, 7, 512)
 
 # reshaping the training as well as validation frames in single dimension
-X_train = X_train.reshape(5932, 7 * 7 * 512)
-X_test = X_test.reshape(1483, 7 * 7 * 512)
+X_train = X_train.reshape(5932, 1000)
+X_test = X_test.reshape(1483, 1000)
 
 # defining the model architecture
 model = Sequential()
-model.add(Dense(1024, activation='relu', input_shape=(25088,)))
+model.add(Dense(1024, activation='relu', input_shape=(1000,)))
 model.add(Dropout(0.5))
 model.add(Dense(512, activation='relu'))
 model.add(Dropout(0.5))
@@ -94,4 +94,4 @@ model.compile(loss='categorical_crossentropy',
 
 # training the model
 print("\033[1;31mFinding best epoch. This may take some time...")
-model.fit(X_train, y_train, epochs=75, validation_data=(X_test, y_test), callbacks=[mcp_save], batch_size=128)
+model.fit(X_train, y_train, epochs=50, validation_data=(X_test, y_test), callbacks=[mcp_save], batch_size=128)

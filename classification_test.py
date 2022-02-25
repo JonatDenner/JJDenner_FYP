@@ -16,10 +16,10 @@ import os
 import sys
 import re
 
-base_model = VGG16(weights='imagenet', include_top=False)
+base_model = VGG16(weights='imagenet', include_top=True)
 
 model = Sequential()
-model.add(Dense(1024, activation='relu', input_shape=(25088,)))
+model.add(Dense(1024, activation='relu', input_shape=(1000,)))
 model.add(Dropout(0.5))
 model.add(Dense(512, activation='relu'))
 model.add(Dropout(0.5))
@@ -91,7 +91,7 @@ for i in tqdm(range(test_videos.shape[0])):
     # extracting features using pre-trained model
     prediction_images = base_model.predict(prediction_images)
     # converting features in one dimensional array
-    prediction_images = prediction_images.reshape(prediction_images.shape[0], 7*7*512)
+    prediction_images = prediction_images.reshape(prediction_images.shape[0], 1000)
     # predicting tags for each array
     predict_x=model.predict(prediction_images)
     classes_x=np.argmax(predict_x,axis=1)
