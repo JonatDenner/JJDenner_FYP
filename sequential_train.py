@@ -2,7 +2,7 @@ import os
 import glob
 import tensorflow.keras as keras
 from tensorflow.keras.layers import TimeDistributed, GRU, Dense, Dropout
-from tensorflow.keras.callbacks import ModelCheckpoint
+from keras.callbacks import ModelCheckpoint
 from keras_video import VideoFrameGenerator
 import tensorflow as tf
 
@@ -13,7 +13,7 @@ classes.sort()
 # some global params
 SIZE = (224, 224)
 CHANNELS = 3
-NBFRAME = 20
+NBFRAME = 25
 BS = 10
 
 # pattern to get videos and classes
@@ -24,7 +24,7 @@ train = VideoFrameGenerator(
     classes=classes,
     glob_pattern=glob_pattern,
     nb_frames=NBFRAME,
-    split_val=.2,
+    split_val=.4,
     shuffle=True,
     batch_size=BS,
     target_shape=SIZE,
@@ -36,7 +36,7 @@ valid = train.get_validation_generator()
 # import keras_video.utils
 # keras_video.utils.show_sample(train)
 
-def build_mobilenet(shape=(224, 224, 3), nbout=3):
+def build_mobilenet(shape=(224, 224, 3), nbout=5):
     model = keras.applications.mobilenet.MobileNet(
         include_top=False,
         input_shape=shape,
@@ -52,7 +52,7 @@ def build_mobilenet(shape=(224, 224, 3), nbout=3):
     output = keras.layers.GlobalMaxPool2D()
     return keras.Sequential([model, output])
 
-def action_model(shape=(20, 224, 224, 3), nbout=3):
+def action_model(shape=(25, 224, 224, 3), nbout=5):
     # Create our convnet with (112, 112, 3) input shape
     convnet = build_mobilenet(shape[1:])
 
@@ -78,7 +78,7 @@ model = action_model(INSHAPE, len(classes))
 
 # print(model.layers)
 
-optimizer = keras.optimizers.SGD()
+optimizer = "Adam"
 
 model.compile(
     optimizer,
@@ -86,7 +86,7 @@ model.compile(
     metrics=['acc']
 )
 
-EPOCHS=50
+EPOCHS=10
 
 # create a "chkp" directory before to run that
 # because ModelCheckpoint will write models inside
@@ -108,3 +108,5 @@ model.fit(
     epochs=EPOCHS,
     callbacks=mcp_save
 )
+
+print(model.summary())

@@ -5,14 +5,15 @@ from tensorflow.keras.layers import TimeDistributed, GRU, Dense, Dropout
 from tensorflow.keras.callbacks import ModelCheckpoint
 from keras_video import VideoFrameGenerator
 import tensorflow as tf
+import numpy as np
 
-classes = [i.split(os.path.sep)[1] for i in glob.glob('test/*')]
+classes = [i.split(os.path.sep)[1] for i in glob.glob('videos/*')]
 classes.sort()
 
 SIZE = (224, 224)
 CHANNELS = 3
-NBFRAME = 20
-BS = 10
+NBFRAME = 25
+BS = 15
 
 glob_pattern='test/{classname}/*.mp4'
 
@@ -20,13 +21,16 @@ test = VideoFrameGenerator(
     classes=classes,
     glob_pattern=glob_pattern,
     nb_frames=NBFRAME,
-    shuffle=True,
+    shuffle=False,
     batch_size=BS,
     target_shape=SIZE,
     nb_channel=CHANNELS,
     use_frame_cache=True)
 
-def build_mobilenet(shape=(224, 224, 3), nbout=3):
+# import keras_video.utils
+# keras_video.utils.show_sample(test)
+
+def build_mobilenet(shape=(224, 224, 3), nbout=5):
     model = keras.applications.mobilenet.MobileNet(
         include_top=False,
         input_shape=shape,
@@ -42,7 +46,7 @@ def build_mobilenet(shape=(224, 224, 3), nbout=3):
     output = keras.layers.GlobalMaxPool2D()
     return keras.Sequential([model, output])
 
-def action_model(shape=(20, 224, 224, 3), nbout=3):
+def action_model(shape=(25, 224, 224, 3), nbout=5):
     # Create our convnet with (112, 112, 3) input shape
     convnet = build_mobilenet(shape[1:])
 
@@ -68,7 +72,7 @@ model = action_model(INSHAPE, len(classes))
 
 model.load_weights("weightSeq.hdf5")
 
-optimizer = keras.optimizers.SGD()
+optimizer = "Adam"
 
 model.compile(
     optimizer,
@@ -76,9 +80,9 @@ model.compile(
     metrics=['acc']
 )
 
-result = model.predict(test)
+result = model.predict(test, verbose=1)
+#print(test.classes)
 
-y_classes = result.argmax(axis=-1)
-
-for value in y_classes:
-	print(value)
+# print(classes)
+for x in result:
+    print(classes[np.argmax(x)])
