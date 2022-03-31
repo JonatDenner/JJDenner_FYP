@@ -86,7 +86,7 @@ model.compile(
     metrics=['acc']
 )
 
-EPOCHS=10
+EPOCHS=15
 
 # create a "chkp" directory before to run that
 # because ModelCheckpoint will write models inside
@@ -104,7 +104,7 @@ mcp_save = ModelCheckpoint(
 model.fit(
     train,
     validation_data=valid,
-    verbose=1,
+    verbose=2,
     epochs=EPOCHS,
     callbacks=mcp_save
 )

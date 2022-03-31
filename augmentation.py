@@ -39,10 +39,7 @@ def augment_and_save_frames(video_reader, output_folder_path, video_clip_name, i
     path_of_video_to_save = output_folder_path + "//" + editted_name
     # Noise value to add to videos for augmentation
     noise_value = random.randint(0, 60)
-    if i % 2 == 0:
-        flip = True
-    else:
-        flip = False
+    flip = False
     # noise_value = 0
     # Rotation angle for video augmentation
     rotation_angle = random.randint(-30, 30)
