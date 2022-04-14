@@ -10,13 +10,13 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 
-main_folder_path = sys.path[0] + "/media/2/train/"
+main_folder_path = sys.path[0] + "/media/1/train/"
 output_folder_path = sys.path[0] + "/csv_out/train/"
 
-SAMPLES = 25
+SAMPLES = 15
 
-def extract(f):
-    print("extracting ", f)
+def extract(f, count):
+    print(str(count), " extracting ", f)
     cap = cv2.VideoCapture(main_folder_path + f)
 
     filename = re.sub(r".mp4", "", f)
@@ -71,22 +71,18 @@ def extract(f):
                 mp_drawing_styles.get_default_hand_landmarks_style(),
                 mp_drawing_styles.get_default_hand_connections_style())
 
-            tmp = [[0.0, 0.0, 0.0],[0.0, 0.0, 0.0],[0.0, 0.0, 0.0],[0.0, 0.0, 0.0],[0.0, 0.0, 0.0],[0.0, 0.0, 0.0]]
-            if("" not in coord_line[0]):
-                for idx1, x in enumerate(coord_line):
-                    #print(coord_line[idx1])
-                    for idx2, y in enumerate(x):
-                        coord_line[idx1][idx2] = re.sub(pattern, '', y)
-                        if(y != ""):
-                            tmp[idx1][idx2] = float(coord_line[idx1][idx2])
-                        else:
-                            tmp[idx1][idx2] = 0.0
-            csv_line.append(tmp)
+          tmp = [[0.0, 0.0, 0.0],[0.0, 0.0, 0.0],[0.0, 0.0, 0.0],[0.0, 0.0, 0.0],[0.0, 0.0, 0.0],[0.0, 0.0, 0.0]]
+          if("" not in coord_line[0]):
+              for idx1, x in enumerate(coord_line):
+                  #print(coord_line[idx1])
+                  for idx2, y in enumerate(x):
+                      coord_line[idx1][idx2] = re.sub(pattern, '', y)
+                      if(y != ""):
+                          tmp[idx1][idx2] = float(coord_line[idx1][idx2])
+                      else:
+                          tmp[idx1][idx2] = 0.0
+          csv_line.append(tmp)
 
-        # Flip the image horizontally for a selfie-view display.
-        #cv2.imshow('MediaPipe Hands', cv2.flip(image, 1))
-        #if cv2.waitKey(5) & 0xFF == 27:
-        #  break
     cap.release()
 
     for idx1, x in enumerate(csv_line):
@@ -114,5 +110,5 @@ if __name__ == "__main__":
             #name = re.sub(r"_.*\.mp4", "", x)
             total_files_m.append(x)
 
-    for x in total_files_m:
-        extract(x)
+    for count, x in enumerate(total_files_m):
+        extract(x, count)
