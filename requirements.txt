@@ -1,5 +1,4 @@
 imageio==2.15.0
-imgaug==0.4.0
 keras ~> 2.13.1rc0
 matplotlib==3.5.1
 mediapipe==0.8.9.1
